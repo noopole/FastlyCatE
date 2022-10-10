@@ -1,5 +1,12 @@
 manifest_version = 2
-name = "Empty starter for JavaScript"
-description = "An empty application template for the Fastly Compute@Edge environment which simply returns a 200 OK response."
+name = "Redirect old URLs at the edge"
+description = ""
 authors = ["<oss@fastly.com>"]
 language = "javascript"
+
+[local_server.backends.origin_0]
+  url = "https://httpbin.org"
+
+[setup.backends.origin_0]
+address = "httpbin.org"
+port = 443
