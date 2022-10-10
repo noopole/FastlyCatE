@@ -1,7 +1,21 @@
-/// <reference types="@fastly/js-compute" />
+import { Router } from "@fastly/expressly";
 
-addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
+const backend = "origin_0";
+const router = new Router();
 
-async function handleRequest(event) {
-  return new Response("OK", { status: 200 });
-}
+// Configure middleware that runs on all requests.
+router.use(async (req, res) => {
+  // This fiddle has a pre-populated dictionary.
+  // See: https://developer.fastly.com/learning/vcl/fiddle/data/
+  // to learn more about specifying data sources for Fiddle.
+  const redirects = new Dictionary("dict_name");
+  const dest = redirects.get(req.urlObj.pathname);
+
+  if (dest) {
+    res.redirect(dest, 308);
+  }
+
+  res.send(await fetch(req, { backend }));
+});
+
+router.listen();
